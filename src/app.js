@@ -1,23 +1,14 @@
 const express = require("express");
 const cors = require("cors");
 
-const { v4: uuid, v4: isUuid } = require('uuid');
+const { v4: uuid } = require('uuid');
 
 const app = express();
 
 app.use(express.json());
 app.use(cors());
-app.use('/repositories/:id', validationId)
 
 const repositories = [];
-
-function validationId(request,response,next){
-  const {id} = request.params;
-  if(!isUuid(id)){
-    return response.status(400).json({error: "Id Incorrect."});
-  }
-  next()
-}
 
 app.get("/repositories", (request, response) => {
   return response.json(repositories);
@@ -36,7 +27,7 @@ app.put("/repositories/:id", (request, response) => {
   const {title,url,techs} = request.body;
   const repository = repositories.find(repo => repo.id == id);
   console.log(repository);
-  if(repository == undefined)
+  if(!repository)
   {
     return response.status(400).json({error: "Repository not localized."})
   }
@@ -62,7 +53,7 @@ app.delete("/repositories/:id", (request, response) => {
 app.post("/repositories/:id/like", (request, response) => {
   const {id} = request.params;
   const repository = repositories.find(repo => repo.id == id);
-  if(repository == undefined)
+  if(!repository)
   {
     return response.status(400).json({error: "Repository not localized."})
   }
